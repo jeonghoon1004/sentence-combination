@@ -1,4 +1,4 @@
-![logo](./logo.png)
+![logo](./data/logo.png)
 # 사양 : 
 python
 window
