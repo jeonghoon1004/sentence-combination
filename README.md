@@ -1,8 +1,8 @@
 ![logo](./data/logo.png)
 # 사양 : 
-python
-window
-json
+- python
+- window
+- json
 
 # 화면  :
 1. 등록(문장, 카테고리박스 선택으로 등록)
