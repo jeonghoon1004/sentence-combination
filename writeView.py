@@ -88,6 +88,7 @@ class WriteApplication(tk.Frame):
         listbox = tk.Listbox(lbl, width=10)
         listbox.insert(tk.END, *self.OptionList)
         listbox.pack()
+        # TODO : 더블클릭 or 드래그 체크 추가
         
         self.chkvariable = tk.BooleanVar(self)
         chkbox = tk.Checkbutton(lbl, text="브라우저", variable=self.chkvariable)

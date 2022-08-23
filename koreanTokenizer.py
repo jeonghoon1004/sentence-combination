@@ -2,9 +2,8 @@
 import json
 import re
 
-from konlpy.tag import Okt
+from konlpy.tag import Okt, Komoran
 from konlpy.utils import pprint
-from konlpy.tag import Komoran
 
 # from krwordrank.word import KRWordRank, summarize_with_keywords
 # from krwordrank.sentence import summarize_with_sentences
@@ -15,7 +14,7 @@ from konlpy.tag import Komoran
 # import matplotlib.pyplot as plt
 # from hanspell import spell_checker
 
-import torch
+# import torch
 # from fastai.text.all import *
 # import fastai
 # from transformers import GPT2LMHeadModel, PreTrainedTokenizerFast
@@ -171,7 +170,7 @@ class kmran:
 #         return TitledStr(self.tokenizer.decode(x.cpu().numpy()))
 
 if __name__ == "__main__": # 직접 실행된 모듈일 경우
-    print(torch.__version__)
+    # print(torch.__version__)
     korText = "빠른 배송 좋은 품질 굿입니다." # test
     test_str = '좋아지는 것 같아요🥰🥰'
     filter = ["배송", "품질", "서비스", "만족"]
