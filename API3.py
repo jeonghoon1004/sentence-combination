@@ -32,17 +32,6 @@ if not os.path.exists(driver_path):
 else:
     print(f"chrome driver ver : {driver_path}")
 
-# 단일 프로세싱일때..
-# try:
-#     for line in os.popen("ps ax | grep chrome | grep -v grep"):
-#         fields = line.split()
-#         pid = fields[0]
-#         # kill terminal level SIGKILL no such
-#         # terminate
-#         os.kill(int(pid), signal.SIGTERM)
-# except OSError:
-#     print("Error : still running recent process - contact server engineer")
-
 path_sentence = 'data/sentence.json'
 path_temp = 'data/test_sentence.json'
 path_temp_json = 'data/test_sentence_json.json'
@@ -98,7 +87,6 @@ for v in range(1, len(sys.argv)):
         print("too much")
         
 # 로깅설정
-# logging.basicConfig(level=logging.INFO, format='%(message_s')
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("ReviewGen")
 
@@ -106,35 +94,22 @@ logger = logging.getLogger("ReviewGen")
 def background_task(visible):
     print("|  back thread start!  |")
     error = []
-    successCnt = 0
-    failureCnt = 0
+    success_cnt = 0
+    failure_cnt = 0
     options = webdriver.ChromeOptions()
-    # if visible == False:
     options.add_argument("--headless")
-    # options.headless = True
     # linux용
     options.add_argument('--no-sandbox')
-    # options.add_argument('--single-process')
     options.add_argument('--disable-setuid-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--remote-debugging-port=9222')
     # options.add_argument('--remote-debugging-port=9230')
     
-    # window용
-    # options.add_argument('window-size=1920x1080')
-    # options.add_argument("disable-gpu")
-
-    # headless 숨기는 용도
-    # options.add_argument("user-agent-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6")
-    # driver = webdriver.Chrome(driver_path, options=options)
-    # driver.implicitly_wait(time_to_wait=interval)
-    # WebElement element = (new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By.id("element")));
     print("웹크롤링 시작")
     # for i in tqdm(range(n)):
     for i in range(n):
         logger.info("progress start pid : {0}".format(os.getpid()) )
         print("| 웹페이지 로딩 : 시작 |")
-        # try:
         driver = webdriver.Chrome(driver_path, options=options)
         driver.implicitly_wait(time_to_wait=interval)
         print("| 웹페이지 로딩 : 세션 시작 |")
@@ -216,48 +191,51 @@ def background_task(visible):
             error.append("Loading took too much time!")
             error.append(t.args[0])
             logger.error("timout error {}".format(t))
-            failureCnt+=1
+            # if driver:
+            #     driver.close()
             # driver.quit()
-        except NoSuchWindowException:
+        except NoSuchWindowException as ew:
             print("| 등록 에러 : NoSuchWindow 에러 |")
             error.append("webdriver can't find window!")
-            error.append(t.args[0])
-            logger.error("웹 로딩 error {}".format(t))
-            failureCnt+=1
+            error.append(ew.args[0])
+            logger.error("웹 로딩 error {}".format(ew))
+            # if driver:
+            #     driver.close()
             # driver.quit()
-        except NoSuchFrameException:
+        except NoSuchFrameException as ef:
             print("| 등록 에러 : NoSuchFrame 에러 |")
             error.append("webdriver can't find frame!")
-            error.append(t.args[0])
-            logger.error("웹 로딩 error {}".format(t))
-            failureCnt+=1
+            error.append(ef.args[0])
+            logger.error("웹 로딩 error {}".format(ef))
+            # if driver:
+            #     driver.close()
             # driver.quit()
         except Exception as e:
             print("| 에러 : 에러발생 |")
             error.append(e.args[0])
             logger.error(e)
-            failureCnt+=1
+            # if driver:
+            #     driver.close()
             # driver.quit()
         finally:
             print("status: {0}, {1}, {2} end".format(success_flag, i, os.getpid()))
             logger.info("url: {0} status: {1}, n: {2} pid: {3} end".format(url, success_flag, i, os.getpid()))
             if success_flag:
                 wrtFilterList.append(text)
-                success_flag+=1
-                # with open(path_writtend, "w", encoding="utf-8") as wt:
-                #     wt.write(json.dumps(wrtFilterList))
+                success_cnt+=1
                 with open(path_writtend, "w", encoding="utf-8") as out_file:
                     json.dump(wrtFilterList, out_file, ensure_ascii=False, indent=6)
                     out_file.close()
+            else:
+                failure_cnt+=1
             driver.switch_to.default_content()
             driver.close()
-            if driver:
-                driver.quit()
-    # driver.switch_to.default_content()
-    if driver:
-        driver.quit()
+            # if driver:
+            #     driver.quit()
+        if driver:
+            driver.quit()
     print("리뷰 등록", " error : {} .".format(error) )
-    logger.info("END Process Review Gen, PID {0} succss: {1} failure: {2}".format(os.getpid(), successCnt, failureCnt))
+    logger.info("END Process Review Gen, PID {0} total: {1} succss: {2} failure: {3}".format(os.getpid(), n, success_cnt, failure_cnt))
 
 # 핸들러 테스트
 # threading 전역 인프리터 록에 의해 하나의 쓰레드만
