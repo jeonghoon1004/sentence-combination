@@ -35,7 +35,7 @@ path_temp = 'data/test_sentence.json'
 path_temp_json = 'data/test_sentence_json.json'
 path_writtend = 'data/writtend-'
 url = "https://save-time.co.kr/product/%EC%97%AC%EB%A6%84%EB%A7%9E%EC%9D%B4-%EC%9D%B4%EB%B2%A4%ED%8A%B8-%EC%97%AC%ED%96%89%EA%B0%88%EB%95%8C-%EA%B2%9F%EC%95%84%EC%9B%83-%EB%A7%A4%ED%8A%B8/1823/category/73/display/1/#prdReview"
-interval = 30
+interval = 10
 
 wrtFilterList = []
 
@@ -81,9 +81,9 @@ logger = logging.getLogger("ReviewGen")
 
 path_writtend = path_writtend + uuid + ".json"
 file = Path(path_writtend)
-if not file.exists():
-    file.touch(exist_ok=True)
-    file.write_text("[]", encoding="utf-8")
+file.touch(exist_ok=True)
+file.write_text("[]", encoding="utf-8")
+# if not file.exists():
     
 
 def background_task(visible):
@@ -94,7 +94,7 @@ def background_task(visible):
     options.add_argument("--headless")
     # linux용
     options.add_argument('--no-sandbox')
-    options.add_argument('--single-process')
+    #options.add_argument('--single-process')
     options.add_argument('--disable-setuid-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--remote-debugging-port=9222')
@@ -104,10 +104,14 @@ def background_task(visible):
 
     # headless 숨기는 용도
     # options.add_argument("user-agent-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6")
-    driver = webdriver.Chrome(driver_path, options=options)
-    driver.implicitly_wait(time_to_wait=interval)
-    print("driver start")
-    for i in tqdm(range(n)):
+
+    # driver = webdriver.Chrome(driver_path, options=options)
+    # driver.implicitly_wait(time_to_wait=interval)
+    # print("driver start")
+    for i in range(n):
+        driver = webdriver.Chrome(driver_path, options=options)
+        driver.implicitly_wait(time_to_wait=interval)
+        print("driver start")
         buildSentence()
         text = sentence
         success_flag = False
@@ -191,7 +195,7 @@ def background_task(visible):
         finally:
             print("status: {0},  {1} end".format(success_flag, i))
             logger.info("status: {0},  {1} end".format(success_flag, i))
-    driver.quit()
+            driver.quit()
     # messagebox.showinfo("리뷰 매크로", "{0}번 시행종료 \n error : {1}".format(n, error))
     # print("리뷰 등록", "{0}번 시행종료 \n error : {1}".format(n, error))
     print("리뷰 등록", " error : {} .".format(error) )

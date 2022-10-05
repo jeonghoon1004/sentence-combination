@@ -17,7 +17,7 @@ class extractExcel():
         open(self.path_json, "w").close()
         for file in self.list:
             df = pandas.read_excel(file, usecols=[1,3,5]) # 1 상품명, 3 리뷰점수, 5 리뷰내용
-            data = pandas.concat([data, df])
+            data = pandas.concat([data, df]) # merge
         self.toJson( data.to_json(orient='records' ,force_ascii=False) )
         # 카테고리별 문장 추출해서 sentence.json 업데이트
         self.getText()
@@ -83,4 +83,3 @@ if __name__ == "__main__":
     print( "content : {}".format( len(extract.TextList) ) )
     print( "content ==== \n{}\n============".format( extract.TextList ) )
     
-# TODO : gettext 후 koreaTokenizer로 분석후 sentence에 분배 작성
